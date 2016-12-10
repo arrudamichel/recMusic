@@ -40,8 +40,8 @@ class ColaborativeFiltering:
         return str(True)
 
     def get_itens(self, user_id, itens_count = 10):        
-        predictions =  self.model.predictAll(self.itens.map(lambda r: ((user_id, r)))).map(lambda r: (r[2],(r[0], r[1])))
-        return str(predictions.sortByKey(False).take(int(itens_count)))
+        predictions =  self.model.predictAll(self.itens.map(lambda r: ((user_id, r)))).map(lambda r: (r[2],r[1]))
+        return predictions.sortByKey(False).take(int(itens_count))
 
 
     def getTopProduct(self,number = 30):

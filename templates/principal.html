@@ -71,12 +71,21 @@
         success: function(result)
         {        
         resultLogar = JSON.parse(result);
-        primeiroLogin(resultLogar[0]);
+        
+        // Se o for a primeira vez a logar, iniciar a tela em que ele escolhe bandas favoritas.
+        if(resultLogar[1] == true)
+        {
+          primeiroLogin(resultLogar[0]);
+        }
+        else
+        {
+          //recomendar(resultLogar[0]); Usar quando a tela do primeiro Login estiver Funcionando.
+          recomendar(1);
+        }
       }});      
      
     });
   }
-
 
   function primeiroLogin(user_id)
   {
@@ -88,6 +97,40 @@
           $("#primeiroLogin").html(result);
       }}); 
   }
+
+var bandasSpotify = [];
+var bandas = [];
+  function recomendar(user_id)
+  {
+    var stringBusca = "";
+    $.ajax({
+        url: "/top/"+user_id,
+        success: function(result)
+        { 
+          bandas = JSON.parse(result);
+          
+          for(x = 0 ;x<bandas.length;x++)
+          {
+                $.ajax({
+                  url: "https://api.spotify.com/v1/search?q=artist%3A"+bandas[x].replace(" ","+")+"&type=track&limit=1",
+                  success: function(result)
+                  {
+                    if(stringBusca == "")
+                    {
+                      stringBusca = result.tracks.items[0].id;
+                    } 
+                    else
+                    {
+                      stringBusca = stringBusca + "," + result.tracks.items[0].id
+                    }                           
+                    $("#primeiroLogin").html(stringBusca);
+                }});    
+          }
+          alert(stringBusca);      
+           $("#telaRecomendar").html('<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:'+stringBusca+'" theme="white" width="600" height="680" frameborder="0" allowtransparency="true"></iframe>');
+          }}
+      ); 
+  }
 </script>
 
 
@@ -98,6 +141,11 @@
 
 
 <div id="primeiroLogin">
+
+
+</div>
+
+<div id="telaRecomendar">
 
 
 </div>

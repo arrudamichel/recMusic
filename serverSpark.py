@@ -27,9 +27,12 @@ def logar(user):
     return json.dumps([uc.index(user),False])
 
 
-@app.route("/top/<user_id>/<count>", methods=["GET"])
-def top_ratings(user_id, count=10): 
-  return cf.get_itens(user_id,count)  
+@app.route("/top/<user_id>", methods=["GET"])
+def top_ratings(user_id):
+  count=10
+  lista = cf.get_itens(user_id,count)  
+  saida = [itens[row[1]] for row in lista] 
+  return json.dumps(saida)
 
 @app.route("/newRating/<user_id>/<item_id>", methods = ["GET"])
 def add_ratings(user_id,item_id):    
@@ -50,7 +53,7 @@ def index():
 
 
 def run_server(app):
-  app.run(port=8081)
+  app.run(port=8080)
 
 
 if __name__ == "__main__":
