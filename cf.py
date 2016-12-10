@@ -28,6 +28,8 @@ class ColaborativeFiltering:
         else:            
             new_ratings = self.sc.parallelize([[user_id,item_id,1]]).map(lambda l: Rating(int(l[0]), int(l[1]), float(l[2])))
             self.ratings = self.ratings.union(new_ratings)
+            #rs = ratings.map(lambda l: int(l.user), int(l.product), float(l.rating))
+            #np.savetxt('m.csv', rs.collect(), delimiter=",")
 
             new_itens = self.sc.parallelize([[item_id]]).map(lambda l: l)
             self.itens = self.itens.union(new_itens)  
