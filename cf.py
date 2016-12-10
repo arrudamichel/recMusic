@@ -1,5 +1,5 @@
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
-
+import numpy as np
 class ColaborativeFiltering:
 
     def __train_model(self):       
@@ -28,8 +28,9 @@ class ColaborativeFiltering:
         else:            
             new_ratings = self.sc.parallelize([[user_id,item_id,1]]).map(lambda l: Rating(int(l[0]), int(l[1]), float(l[2])))
             self.ratings = self.ratings.union(new_ratings)
-            #rs = ratings.map(lambda l: int(l.user), int(l.product), float(l.rating))
-            #np.savetxt('m.csv', rs.collect(), delimiter=",")
+            rddmatrix = self.ratings.map(lambda l: (l.user,l.product,l.rating))
+            np.savetxt('m2.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
+
 
             new_itens = self.sc.parallelize([[item_id]]).map(lambda l: l)
             self.itens = self.itens.union(new_itens)  
