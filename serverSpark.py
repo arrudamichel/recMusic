@@ -35,6 +35,13 @@ def top_ratings(user_id, count=10):
 def add_ratings(user_id,item_id):    
   return cf.new_rating(user_id,item_id,1)
 
+
+@app.route("/tops/", methods = ["GET"])
+def tops():    
+  lista = cf.getTopProduct()
+  saida = [itens[row[1]] for row in lista]
+  return json.dumps(saida)
+
 @app.route('/')
 def index():
   return render_template('principal.html')  
@@ -52,8 +59,13 @@ if __name__ == "__main__":
 
   global cf 
   cf = ColaborativeFiltering(sc, "/home/hugdiniz/Work/Workspace/recMusic/dataset/m.csv")
+  
   global users
   users = sc.textFile("/home/hugdiniz/Work/Workspace/recMusic/dataset/u.csv")
+  
+  global itens
+  itens = sc.textFile("/home/hugdiniz/Work/Workspace/recMusic/dataset/v.csv")
+  itens = itens.collect()
 
   # start web server
   run_server(app)

@@ -29,7 +29,7 @@ class ColaborativeFiltering:
             new_ratings = self.sc.parallelize([[user_id,item_id,1]]).map(lambda l: Rating(int(l[0]), int(l[1]), float(l[2])))
             self.ratings = self.ratings.union(new_ratings)
             rddmatrix = self.ratings.map(lambda l: (l.user,l.product,l.rating))
-            np.savetxt('m2.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
+            np.savetxt('dataset/m.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
 
 
             new_itens = self.sc.parallelize([[item_id]]).map(lambda l: l)
@@ -42,4 +42,10 @@ class ColaborativeFiltering:
     def get_itens(self, user_id, itens_count = 10):        
         predictions =  self.model.predictAll(self.itens.map(lambda r: ((user_id, r)))).map(lambda r: (r[2],(r[0], r[1])))
         return str(predictions.sortByKey(False).take(int(itens_count)))
+
+
+    def getTopProduct(self,number = 30):
+        rddmatrix = self.ratings.map(lambda l: (l.rating,l.product))
+        
+        return rddmatrix.take(number)
 
