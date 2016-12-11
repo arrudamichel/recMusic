@@ -2,7 +2,7 @@ from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 import numpy as np
 from random import shuffle
 
-caminhoInterno = "/home/michel/Documentos/Spark/recMusic/"
+caminhoInterno = "/home/hugdiniz/Work/Workspace/recMusic/"
 
 class ColaborativeFiltering:
 

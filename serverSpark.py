@@ -9,8 +9,8 @@ import numpy as np
 
 app = Flask(__name__)
 
-caminho = "/home/michel/Documentos/Spark/recMusic"
-caminhoInterno = "/home/michel/Documentos/Spark/recMusic/"
+caminho = "/home/hugdiniz/Work/Workspace/recMusic"
+caminhoInterno = "/home/hugdiniz/Work/Workspace/recMusic/"
 
 @app.route("/logar/<user>", methods = ["GET"])
 def logar(user):
