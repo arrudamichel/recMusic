@@ -21,7 +21,7 @@ def logar(user):
     new_user = sc.parallelize([user]).map(lambda l: l)   
     users = users.union(new_user)
     uc = users.collect()   
-    index = uc.index(user)    
+    index = uc.index(user)+1
     np.savetxt(caminhoInterno+'dataset/u.csv', uc, delimiter="\n", fmt="%s")
 
     return json.dumps([index,True])
@@ -35,6 +35,8 @@ def top_ratings(user_id):
   count=10
   lista = cf.get_itens(user_id,count)
   ci = itens.collect()
+  print(ci)
+  print(user_id)
   saida = [ci[row[1]] for row in lista] 
   return json.dumps(saida)
 
@@ -48,7 +50,7 @@ def know_user(stritens,user_id):
   new_itens = stritens.split(",")
   ci = itens.collect()
   indexs = [ci.index(ni) for ni in new_itens]    
-  return cf.know_user(user_id,indexs,15000)
+  return cf.know_user(user_id,indexs,35000)
 
 
 @app.route("/tops/", methods = ["GET"])
