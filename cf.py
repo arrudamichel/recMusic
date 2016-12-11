@@ -1,5 +1,6 @@
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 import numpy as np
+from random import shuffle
 
 caminhoInterno = "/home/hugdiniz/Work/Workspace/recMusic/"
 
@@ -62,6 +63,7 @@ class ColaborativeFiltering:
 
     def getTopProduct(self,number = 30):
         rddmatrix = self.ratings.map(lambda l: (l.rating,l.product))
-        
-        return rddmatrix.take(number)
+        colecao =rddmatrix.collect()
+        shuffle(colecao)
+        return [colecao[x] for x in range(number)]
 
