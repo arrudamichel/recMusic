@@ -16,7 +16,7 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-<!-- <script type=text/javascript src="{{url_for('static', filename='jquery-3.1.1.min.js') }}"></script> -->
+<!--  -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 
@@ -83,8 +83,10 @@
         success: function(result) {        
           resultLogar = JSON.parse(result);
           console.log(result);
+          $("#usuarioNome").html("Olá "+response.name);
+          $("#photoUsuario").attr("src","http://graph.facebook.com/"+response.id+"/picture?type=normal");
           // Se o for a primeira vez a logar, iniciar a tela em que ele escolhe bandas favoritas.
-          if(resultLogar[1] == true) {
+          if(resultLogar[1] == true) {            
             primeiroLogin(resultLogar[0], response.name);
           }
           else {
@@ -165,7 +167,7 @@ var bandas = [];
                       }        
                       
                       console.log(stringBusca);
-                      $("#telaRecomendar").html('<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:'+stringBusca+'" theme="white" width="600" height="680" frameborder="0" allowtransparency="true"></iframe>');
+                      $("#telaRecomendar").html('<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:'+stringBusca+'" theme="white" width="600" height="550" frameborder="0" allowtransparency="true"></iframe>');
                       /*$("#primeiroLogin").html(stringBusca);                      */
                 }});    
 
@@ -176,6 +178,7 @@ var bandas = [];
   }
 </script>
 
+{% include 'header.html' %}
 
 <div class="logar">
    <div class="container" style="margin-top: 10%; width: 500px;"> 
