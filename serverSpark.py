@@ -38,6 +38,14 @@ def top_ratings(user_id):
 def add_ratings(user_id,item_id):    
   return cf.new_rating(user_id,item_id,1)
 
+@app.route("/knowUser/<stritens>/<user_id>", methods = ["GET"])
+def know_user(stritens,user_id):
+  
+  new_itens = stritens.split(",")
+  ci = itens.collect()
+  indexs = [ci.index(ni) for ni in new_itens]    
+  return cf.know_user(user_id,indexs,15000)
+
 
 @app.route("/tops/", methods = ["GET"])
 def tops():    
@@ -53,7 +61,7 @@ def index():
 
 
 def run_server(app):
-  app.run(port=8080)
+  app.run(port=8082)
 
 
 if __name__ == "__main__":
@@ -68,7 +76,6 @@ if __name__ == "__main__":
   
   global itens
   itens = sc.textFile("/home/hugdiniz/Work/Workspace/recMusic/dataset/v.csv")
-  itens = itens.collect()
 
   # start web server
   run_server(app)

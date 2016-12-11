@@ -39,6 +39,19 @@ class ColaborativeFiltering:
 
         return str(True)
 
+
+    def know_user(self, user, itens,rating):
+        
+        new_ratings = self.sc.parallelize(itens).map(lambda l: Rating(int(user), int(l), float(rating)))
+        
+        self.ratings = self.ratings.union(new_ratings)
+        rddmatrix = self.ratings.map(lambda l: (l.user,l.product,l.rating))
+        np.savetxt('dataset/m.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
+   
+        self.__train_model()
+
+        return str(True)
+
     def get_itens(self, user_id, itens_count = 10):        
         predictions =  self.model.predictAll(self.itens.map(lambda r: ((user_id, r)))).map(lambda r: (r[2],r[1]))
         return predictions.sortByKey(False).take(int(itens_count))
