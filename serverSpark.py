@@ -30,8 +30,9 @@ def logar(user):
 @app.route("/top/<user_id>", methods=["GET"])
 def top_ratings(user_id):
   count=10
-  lista = cf.get_itens(user_id,count)  
-  saida = [itens[row[1]] for row in lista] 
+  lista = cf.get_itens(user_id,count)
+  ci = itens.collect()
+  saida = [ci[row[1]] for row in lista] 
   return json.dumps(saida)
 
 @app.route("/newRating/<user_id>/<item_id>", methods = ["GET"])
@@ -50,7 +51,8 @@ def know_user(stritens,user_id):
 @app.route("/tops/", methods = ["GET"])
 def tops():    
   lista = cf.getTopProduct()
-  saida = [itens[row[1]] for row in lista]
+  ci = itens.collect()
+  saida = [ci[row[1]] for row in lista]
   return json.dumps(saida)
 
 @app.route('/')
