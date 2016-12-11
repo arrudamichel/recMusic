@@ -9,6 +9,9 @@ import numpy as np
 
 app = Flask(__name__)
 
+caminho = "/home/michel/Documentos/Spark/recMusic"
+caminhoInterno = "/home/michel/Documentos/Spark/recMusic/"
+
 @app.route("/logar/<user>", methods = ["GET"])
 def logar(user):
   global users    
@@ -18,8 +21,8 @@ def logar(user):
     new_user = sc.parallelize([user]).map(lambda l: l)   
     users = users.union(new_user)
     uc = users.collect()   
-    index = uc.index(user)
-    np.savetxt('dataset/u.csv', uc, delimiter="\n", fmt="%s")
+    index = uc.index(user)    
+    np.savetxt(caminhoInterno+'dataset/u.csv', uc, delimiter="\n", fmt="%s")
 
     return json.dumps([index,True])
 
@@ -63,21 +66,22 @@ def index():
 
 
 def run_server(app):
-  app.run(port=8082)
+  app.run(port=8083)
 
 
 if __name__ == "__main__":
   # Init spark context and load libraries
-  sc = SparkContext("local", "App Name", pyFiles=['serverSpark.py', 'cf.py'])
+  sc = SparkContext("local", "App Name", pyFiles=[caminhoInterno+'serverSpark.py', caminhoInterno+'cf.py'])
 
   global cf 
-  cf = ColaborativeFiltering(sc, "/home/hugdiniz/Work/Workspace/recMusic/dataset/m.csv")
+  #cf = ColaborativeFiltering(sc, "/home/hugdiniz/Work/Workspace/recMusic/dataset/m.csv")
+  cf = ColaborativeFiltering(sc, caminho+"/dataset/m.csv")
   
   global users
-  users = sc.textFile("/home/hugdiniz/Work/Workspace/recMusic/dataset/u.csv")
+  users = sc.textFile(caminho+"/dataset/u.csv")
   
   global itens
-  itens = sc.textFile("/home/hugdiniz/Work/Workspace/recMusic/dataset/v.csv")
+  itens = sc.textFile(caminho+"/dataset/v.csv")
 
   # start web server
   run_server(app)

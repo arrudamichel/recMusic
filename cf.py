@@ -1,5 +1,8 @@
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 import numpy as np
+
+caminhoInterno = "/home/michel/Documentos/Spark/recMusic/"
+
 class ColaborativeFiltering:
 
     def __train_model(self):       
@@ -46,7 +49,7 @@ class ColaborativeFiltering:
         
         self.ratings = self.ratings.union(new_ratings)
         rddmatrix = self.ratings.map(lambda l: (l.user,l.product,l.rating))
-        np.savetxt('dataset/m.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
+        np.savetxt(caminhoInterno+'dataset/m.csv', rddmatrix.collect(), delimiter=",",fmt='%d')
    
         self.__train_model()
 

@@ -1,0 +1,13 @@
+body {
+   	margin : 0 !important;
+   	background: url(img/guitar.jpg);
+   	background-size: cover;   	
+}
+
+/*.fundo {	
+    max-height:100%;
+    max-width:100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+}*/

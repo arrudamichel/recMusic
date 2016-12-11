@@ -5,7 +5,10 @@
 <meta charset="UTF-8">
 </head>
 <body>
-<script type=text/javascript src="{{url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='principal.css') }}">
+
+<!-- <script type=text/javascript src="{{url_for('static', filename='jquery-3.1.1.min.js') }}"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 
   function statusChangeCallback(response) {
@@ -43,8 +46,7 @@
     });
 
    
-    FB.getLoginStatus(function(response) 
-    {
+    FB.getLoginStatus(function(response) {
       statusChangeCallback(response);
     });
 
@@ -60,73 +62,106 @@
   }(document, 'script', 'facebook-jssdk'));
 
   var resultLogar = []
-  function incializar() 
-  {
+  
+  function incializar() {
     
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
+      
       console.log('Successful login for: ' + response.name);     
       $.ajax({
         url: "/logar/"+ response.id,
-        success: function(result)
-        {        
-        resultLogar = JSON.parse(result);
-        
-        // Se o for a primeira vez a logar, iniciar a tela em que ele escolhe bandas favoritas.
-        if(resultLogar[1] == true)
-        {
-          primeiroLogin(resultLogar[0]);
-        }
-        else
-        {
-          //recomendar(resultLogar[0]); Usar quando a tela do primeiro Login estiver Funcionando.
-          recomendar(1);
-        }
+        success: function(result) {        
+          resultLogar = JSON.parse(result);
+          console.log(result);
+          // Se o for a primeira vez a logar, iniciar a tela em que ele escolhe bandas favoritas.
+          if(resultLogar[1] == true) {
+            primeiroLogin(resultLogar[0], response.name);
+          }
+          else {
+            //recomendar(resultLogar[0]); Usar quando a tela do primeiro Login estiver Funcionando.
+            recomendar(resultLogar[0], response.name);
+          }
       }});      
      
     });
   }
 
-  function primeiroLogin(user_id)
-  {
+  function primeiroLogin(user_id, user_name) {
     $.ajax({
         url: "/tops/",
-        success: function(result)
-        { 
-          bandas = JSON.parse(result);       
-          $("#primeiroLogin").html(result);
+        success: function(result) {
+          bandas = JSON.parse(result);   
+
+          $(".logar").hide();
+
+          $("#primeiroLogin").append("<H1 Bem vindo, "+user_name);
+          $("#primeiroLogin").append("<form action=''>");
+
+
+          for (i in bandas) {
+            var banda = bandas[i];
+            $("#primeiroLogin").append("<input type='checkbox' name='banda' value='"+banda+"'id='bandas'>"+banda+"</input><br>");  
+          }
+
+          $("#primeiroLogin").append("<button type='button' id='buttonRecomende'>Recomende-me</button>");
+          $("#primeiroLogin").append("</form>");
+
+          var escolhidas = '';
+          $("#buttonRecomende").click(function() {
+              $("input:checkbox[name='banda']:checked").each(function(){                
+                  if (escolhidas == '') {
+                      escolhidas = $(this).val();
+                  } else {                    
+                    escolhidas += ',' + $(this).val();
+                  }
+              });
+
+              console.log(escolhidas);
+
+
+              $.ajax({
+                url: "/knowUser/"+escolhidas+"/"+ user_id,
+                success: function(result) {        
+                  //resultLogar = JSON.parse(result);                                                             
+                  console.log(result);
+                }
+              })
+          });
       }}); 
   }
 
 var bandasSpotify = [];
 var bandas = [];
-  function recomendar(user_id)
-  {
+  function recomendar(user_id, user_name) {
     var stringBusca = "";
     $.ajax({
         url: "/top/"+user_id,
-        success: function(result)
-        { 
+        success: function(result) { 
           bandas = JSON.parse(result);
           
-          for(x = 0 ;x<bandas.length;x++)
-          {
+          console.log(bandas);
+          
+          $(".logar").hide();
+          $("#primeiroLogin").append("<H1 Bem vindo, "+user_name);
+
+          for(x = 0 ;x<bandas.length;x++) {                          
                 $.ajax({
                   url: "https://api.spotify.com/v1/search?q=artist%3A"+bandas[x].replace(" ","+")+"&type=track&limit=1",
-                  success: function(result)
-                  {
-                    if(stringBusca == "")
-                    {
-                      stringBusca = result.tracks.items[0].id;
-                    } 
-                    else
-                    {
-                      stringBusca = stringBusca + "," + result.tracks.items[0].id
-                    }                           
-                    $("#primeiroLogin").html(stringBusca);
+                  success: function(result) {                      
+                      if(stringBusca == "") {
+                          stringBusca = result.tracks.items[0].id;
+                      } else {
+                          stringBusca = stringBusca + "," + result.tracks.items[0].id
+                      }        
+                      
+                      console.log(stringBusca);
+                      /*$("#primeiroLogin").html(stringBusca);                      */
                 }});    
-          }
-          alert(stringBusca);      
+
+          } 
+
+          //alert(stringBusca);      
            $("#telaRecomendar").html('<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:'+stringBusca+'" theme="white" width="600" height="680" frameborder="0" allowtransparency="true"></iframe>');
           }}
       ); 
