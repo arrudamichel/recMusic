@@ -106,14 +106,18 @@
     $.ajax({
         url: "/tops/",
         success: function(result) {
+
+          $.unblockUI();
+
           bandas = JSON.parse(result);   
-          
-          console.log("Primeiro");
-          console.log(bandas);
 
           $(".logarFacebook").hide();
 
           $("#listaBandas").html("");
+          $("#primeiroLogin").html("");
+          $("#divRecomendar").html("");          
+
+          $("#listaBandas").show();
 
           $("#listaBandas").append("<h2 class='form-signin-heading'>Selecione as bandas preferidas:</h2>")                  
           $("#listaBandas").append("<div class='row'><form action=''>");
@@ -133,9 +137,7 @@
           $("#listaBandas").append("<br><br><br><button type='button' id='buttonTroca' style='background-color:#4267b2;color:white; border:none; padding:6px 12px;float:right; width:100%;'>Trocar opções</button>");
 
           var escolhidas = '';
-          $("#buttonRecomende").click(function() {
-
-              $.blockUI({ message: '<h1>Carregando...</h1>' });
+          $("#buttonRecomende").click(function() {            
               
               $("input:checkbox[name='banda']:checked").each(function(){                
                   if (escolhidas == '') {
@@ -145,16 +147,23 @@
                   }
               });
 
+              $.blockUI({ message: '<h1>Carregando...</h1>' });
+
               $.ajax({
                 url: "/knowUser/"+escolhidas+"/"+ user_id,
                 success: function(result) { 
+                  $.unblockUI();
+
+                  console.log(escolhidas);
+                  
                   if (result == 'True'){
                     recomendar(user_id);
+                    
                   }                  
                 }
               })
 
-              $(document).ajaxStop($.unblockUI);
+              
           });
 
 
@@ -162,8 +171,6 @@
               primeiroLogin(user_id, user_name);
           });
       }}); 
-
-      $(document).ajaxStop($.unblockUI);
   }
 
 var bandasSpotify = [];
@@ -176,6 +183,14 @@ var bandas = [];
     $.ajax({
         url: "/top/"+user_id,
         success: function(result) { 
+          
+          $("#telaRecomendar").html();
+          $("#divRecomendar").html("");
+          $("#divRecomendar").append("<div id='telaRecomendar'> </div> ");
+
+          $.unblockUI();
+          $(document).ajaxStop($.unblockUI);
+
           bandas = JSON.parse(result);
           
           console.log(bandas);
@@ -188,6 +203,10 @@ var bandas = [];
                     $.ajax({
                       url: "https://api.spotify.com/v1/search?q=artist%3A"+bandas[x].replace(" ","+")+"&type=track&limit=1",
                       success: function(result) {                      
+
+                          $.unblockUI();
+                          $(document).ajaxStop($.unblockUI);
+
                           if(stringBusca == "") {
                               stringBusca = result.tracks.items[0].id;
                           } else {
@@ -195,22 +214,26 @@ var bandas = [];
                           }        
                           
                           $("#listaBandas").hide();
-                          console.log(stringBusca);
+
                           $("#telaRecomendar").html('<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:'+stringBusca+'" theme="white" width="100%" height="550" frameborder="0" allowtransparency="true"></iframe>');
                           /*$("#primeiroLogin").html(stringBusca);                      */
 
-                          $.unblockUI();
-                          $(document).ajaxStop($.unblockUI);
                     }});    
 
-              }   
+              } 
+
+              $("#divRecomendar").append("<br><br><button type='button' id='buttonEscolhe' style='background-color:#4267b2;color:white; border:none; padding:6px 12px;float:right; width:100%;'>Escolher outras bandas</button>");  
+
+              $("#buttonEscolhe").click(function() {
+
+                primeiroLogin(user_id, user_name);
+
+              });
           } else {
             primeiroLogin(user_id, user_name);
           }
           }}
       ); 
-
-    $(document).ajaxStop($.unblockUI);
   }
 </script>
 
@@ -230,7 +253,9 @@ var bandas = [];
 
       <div id="listaBandas"> </div>
 
-      <div id="telaRecomendar"> </div>
+      <div id="divRecomendar">
+        <div id="telaRecomendar"> </div>        
+      </div>
 
     </div> 
   
