@@ -1,7 +1,7 @@
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 import numpy as np
 
-caminhoInterno = "/home/michel/Documentos/Spark/recMusic/"
+caminhoInterno = "/home/hugdiniz/Work/Workspace/recMusic/"
 
 class ColaborativeFiltering:
 
