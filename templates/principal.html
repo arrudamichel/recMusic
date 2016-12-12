@@ -96,7 +96,7 @@
             //recomendar(resultLogar[0]); Usar quando a tela do primeiro Login estiver Funcionando.
             recomendar(resultLogar[0]);
           }
-      }}); 7     
+      }});
      
     });
   }
@@ -141,13 +141,15 @@
           
           $("#buttonRecomende").click(function() {                            
 
+              $("input:checkbox[name='banda']:checked").each(function(){                
+                  if (escolhidas == '') {
+                      escolhidas = $(this).val();
+                  } else {                    
+                    escolhidas += ',' + $(this).val();
+                  }
+              });
+              
               $.blockUI({ message: '<h1>Carregando...</h1>' });
-
-              if(escolhidas == ''){
-
-                  recomendar(user_id);
-
-              } else {
                   
                   $.ajax({
                   url: "/knowUser/"+escolhidas+"/"+ user_id,
@@ -159,13 +161,11 @@
                     if (result == 'True'){
                       recomendar(user_id);
                       
-                    }                  
+                    }
+
+                    escolhidas = '';                  
                   }
-                });  
-
-              }              
-
-              escolhidas = '';
+                }); 
           });
 
 
