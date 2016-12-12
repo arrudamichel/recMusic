@@ -18,7 +18,7 @@ class ColaborativeFiltering:
         self.itens = lines.map(lambda l: l.split(',')).map(lambda l: int(l[1])).distinct()
         self.ratings = lines.map(lambda l: l.split(',')).map(lambda l: Rating(int(l[0]), int(l[1]), float(l[2])))
         
-        self.rank = 8       
+        self.rank = 10   
         self.iterations = 10
         self.regularization_parameter = 0.1
 

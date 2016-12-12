@@ -50,7 +50,7 @@ def know_user(stritens,user_id):
   new_itens = stritens.split(",")
   ci = itens.collect()
   indexs = [ci.index(ni) for ni in new_itens]    
-  return cf.know_user(user_id,indexs,35000)
+  return cf.know_user(user_id,indexs,5000)
 
 
 @app.route("/tops/", methods = ["GET"])
