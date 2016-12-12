@@ -21,6 +21,8 @@
 <script src="{{url_for('static', filename='jquery.blockUI.js') }}"></script>
 <script type="text/javascript">
 
+  var escolhidas = '';
+
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
     console.log(response);
@@ -124,7 +126,7 @@
 
           for (i in bandas) {
             var banda = bandas[i];
-            $("#listaBandas").append("<div class='col-sm-6'><input type='checkbox' name='banda' style='margin-left:20px; font-size:18px; margin-right:5px;' value='"+banda+"'id='bandas'>"+banda+"</input></div>");              
+            $("#listaBandas").append("<div class='col-sm-6'><input type='checkbox' name='banda' style='font-size:18px; margin-right:5px;' value='"+banda+"'id='bandas'>"+banda+"</input></div>");              
 
             if(i%2 != 0){
                 $("#listaBandas").append("<br>");
@@ -134,11 +136,41 @@
           $("#listaBandas").append("</form></div>");
           $("#listaBandas").append("<br><br><br><button type='button' id='buttonRecomende' style='background-color:#4267b2;color:white; border:none; padding:6px 12px;float:right; width:100%;'>Recomende-me</button>");
 
-          $("#listaBandas").append("<br><br><br><button type='button' id='buttonTroca' style='background-color:#4267b2;color:white; border:none; padding:6px 12px;float:right; width:100%;'>Trocar opções</button>");
+          $("#listaBandas").append("<br><br><br><button type='button' id='buttonTroca' style='background-color:#4267b2;color:white; border:none; padding:6px 12px;float:right; width:100%;'>Adicionar mais bandas</button>");
 
-          var escolhidas = '';
-          $("#buttonRecomende").click(function() {            
-              
+          
+          $("#buttonRecomende").click(function() {                            
+
+              $.blockUI({ message: '<h1>Carregando...</h1>' });
+
+              if(escolhidas == ''){
+
+                  recomendar(user_id);
+
+              } else {
+                  
+                  $.ajax({
+                  url: "/knowUser/"+escolhidas+"/"+ user_id,
+                  success: function(result) { 
+                    $.unblockUI();
+
+                    console.log(escolhidas);
+                    
+                    if (result == 'True'){
+                      recomendar(user_id);
+                      
+                    }                  
+                  }
+                });  
+
+              }              
+
+              escolhidas = '';
+          });
+
+
+          $("#buttonTroca").click(function() {
+
               $("input:checkbox[name='banda']:checked").each(function(){                
                   if (escolhidas == '') {
                       escolhidas = $(this).val();
@@ -147,28 +179,8 @@
                   }
               });
 
-              $.blockUI({ message: '<h1>Carregando...</h1>' });
-
-              $.ajax({
-                url: "/knowUser/"+escolhidas+"/"+ user_id,
-                success: function(result) { 
-                  $.unblockUI();
-
-                  console.log(escolhidas);
-                  
-                  if (result == 'True'){
-                    recomendar(user_id);
-                    
-                  }                  
-                }
-              })
-
-              
-          });
-
-
-          $("#buttonTroca").click(function() {
               primeiroLogin(user_id, user_name);
+
           });
       }}); 
   }
